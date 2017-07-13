@@ -1,11 +1,27 @@
 package com.datawizards.dbtable2class
 
 import com.datawizards.dbtable2class.dialects.Dialect
-import com.datawizards.dbtable2class.model.ColumnMetadata
+import com.datawizards.dbtable2class.model.{ColumnMetadata, TableClassMapping}
 
 import scala.collection.mutable.ListBuffer
 
 object ClassGenerator {
+
+  def generateClasses(
+                       dbUrl: String,
+                       connectionProperties: java.util.Properties,
+                       dialect: Dialect,
+                       mappings: Iterable[TableClassMapping]
+                     ): Iterable[String] =
+    mappings.map(m => generateClass(
+      m.className,
+      dbUrl,
+      connectionProperties,
+      m.schema,
+      m.table,
+      dialect
+    ))
+
   def generateClass(
       className: String,
       dbUrl: String,

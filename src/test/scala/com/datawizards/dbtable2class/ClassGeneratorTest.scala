@@ -3,6 +3,7 @@ package com.datawizards.dbtable2class
 import java.sql.DriverManager
 
 import com.datawizards.dbtable2class.dialects.H2Dialect
+import com.datawizards.dbtable2class.model.TableClassMapping
 import org.scalatest._
 
 class ClassGeneratorTest extends FunSuite with Matchers {
@@ -53,6 +54,30 @@ class ClassGeneratorTest extends FunSuite with Matchers {
         |  DATEVAL: java.sql.Date,
         |  TIMESTAMPVAL: java.sql.Timestamp
         |)""".stripMargin
+    )
+  }
+
+  test("Generate multiple classes") {
+    connection.createStatement().execute("create table T1(NAME VARCHAR, AGE INT)")
+    connection.createStatement().execute("create table T2(TITLE VARCHAR, AUTHOR VARCHAR)")
+    val classDefinitions = ClassGenerator.generateClasses(
+      url, null, H2Dialect, Seq(
+        TableClassMapping("PUBLIC", "T1", "Person"),
+        TableClassMapping("PUBLIC", "T2", "Book")
+      )
+    )
+    classDefinitions should equal(Seq(
+      """
+        |case class Person(
+        |  NAME: String,
+        |  AGE: Int
+        |)""".stripMargin,
+      """
+        |case class Book(
+        |  TITLE: String,
+        |  AUTHOR: String
+        |)""".stripMargin
+      )
     )
   }
 
