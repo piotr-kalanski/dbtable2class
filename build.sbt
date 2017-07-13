@@ -28,7 +28,8 @@ developers := List(
 
 libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "2.2.6" % "test",
-  "junit" % "junit" % "4.10" % "test"
+  "junit" % "junit" % "4.10" % "test",
+  "com.h2database" % "h2" % "1.4.195" % "test"
 )
 
 coverageExcludedPackages := "com.datawizards.dbtable2class.examples.*"
