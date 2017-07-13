@@ -60,3 +60,14 @@ case class Person(
   AGE: Int
 )
 ```
+
+## Generate output to directory
+
+```scala
+ClassGenerator.generateClassesToDirectory(
+  "target", url, null, H2Dialect, Seq(
+    TableClassMapping("PUBLIC", "T11", "com.datawizards.model", "Person"),
+    TableClassMapping("PUBLIC", "T22", "com.datawizards.model", "Book")
+  )
+)
+```

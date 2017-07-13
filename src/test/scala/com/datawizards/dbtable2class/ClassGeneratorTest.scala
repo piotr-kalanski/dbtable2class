@@ -1,5 +1,6 @@
 package com.datawizards.dbtable2class
 
+import java.io.File
 import java.sql.DriverManager
 
 import com.datawizards.dbtable2class.dialects.H2Dialect
@@ -62,8 +63,8 @@ class ClassGeneratorTest extends FunSuite with Matchers {
     connection.createStatement().execute("create table T2(TITLE VARCHAR, AUTHOR VARCHAR)")
     val classDefinitions = ClassGenerator.generateClasses(
       url, null, H2Dialect, Seq(
-        TableClassMapping("PUBLIC", "T1", "Person"),
-        TableClassMapping("PUBLIC", "T2", "Book")
+        TableClassMapping("PUBLIC", "T1", "", "Person"),
+        TableClassMapping("PUBLIC", "T2", "", "Book")
       )
     )
     classDefinitions should equal(Seq(
@@ -81,4 +82,39 @@ class ClassGeneratorTest extends FunSuite with Matchers {
     )
   }
 
+  test("Generate to directory") {
+    connection.createStatement().execute("create table T11(NAME VARCHAR, AGE INT)")
+    connection.createStatement().execute("create table T22(TITLE VARCHAR, AUTHOR VARCHAR)")
+    ClassGenerator.generateClassesToDirectory(
+      "target", url, null, H2Dialect, Seq(
+        TableClassMapping("PUBLIC", "T11", "com.datawizards.model", "Person"),
+        TableClassMapping("PUBLIC", "T22", "com.datawizards.model", "Book")
+      )
+    )
+
+    deleteDirectory("target/com")
+
+    readFileContent("target/com/datawizards/model/Person.scala") should equal(
+      """package com.datawizards.model
+        |
+        |case class Person(
+        |  NAME: String,
+        |  AGE: Int
+        |)""".stripMargin
+    )
+    readFileContent("target/com/datawizards/model/Book.scala") should equal(
+      """package com.datawizards.model
+        |
+        |case class Book(
+        |  TITLE: String,
+        |  AUTHOR: String
+        |)""".stripMargin
+    )
+  }
+
+  private def readFileContent(file: String): String =
+    scala.io.Source.fromFile(file).getLines().mkString("\n")
+
+  private def deleteDirectory(dir: String): Unit =
+    new File(dir).delete()
 }
