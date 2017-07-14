@@ -1,12 +1,13 @@
 package com.datawizards.dbtable2class.dialects
 
 import java.sql.{DriverManager, ResultSet}
-
+import org.apache.log4j.Logger
 import com.datawizards.dbtable2class.model.ColumnMetadata
-
 import scala.collection.mutable.ListBuffer
 
 trait Dialect {
+  protected val log: Logger = Logger.getLogger(getClass.getName)
+
   def mapColumnTypeToScalaType(column: ColumnMetadata): String
 
   def extractTableColumns(dbUrl: String, connectionProperties: java.util.Properties, schema: String, table: String): Iterable[ColumnMetadata] = {
