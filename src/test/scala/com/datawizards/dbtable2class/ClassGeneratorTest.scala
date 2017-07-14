@@ -15,12 +15,12 @@ class ClassGeneratorTest extends FunSuite with Matchers {
   test("generate people") {
     connection.createStatement().execute("create table PEOPLE(NAME VARCHAR, AGE INT)")
     val classDefinition = ClassGenerator.generateClass("Person", url, null, "PUBLIC", "PEOPLE", H2Dialect)
-    classDefinition should equal(
+    classDefinition.replace("\n","").replace("\r","") should equal(
       """
         |case class Person(
         |  NAME: String,
         |  AGE: Int
-        |)""".stripMargin
+        |)""".stripMargin.replace("\n","").replace("\r","")
     )
   }
 
@@ -41,7 +41,7 @@ class ClassGeneratorTest extends FunSuite with Matchers {
       """.stripMargin
     connection.createStatement().execute(ddl)
     val classDefinition = ClassGenerator.generateClass("AllTypes", url, null, "PUBLIC", "ALL_TYPES", H2Dialect)
-    classDefinition should equal(
+    classDefinition.replace("\n","").replace("\r","") should equal(
       """
         |case class AllTypes(
         |  STRVAL: String,
@@ -54,7 +54,7 @@ class ClassGeneratorTest extends FunSuite with Matchers {
         |  BYTEVAL: Byte,
         |  DATEVAL: java.sql.Date,
         |  TIMESTAMPVAL: java.sql.Timestamp
-        |)""".stripMargin
+        |)""".stripMargin.replace("\n","").replace("\r","")
     )
   }
 
@@ -67,17 +67,17 @@ class ClassGeneratorTest extends FunSuite with Matchers {
         TableClassMapping("PUBLIC", "T2", "", "Book")
       )
     )
-    classDefinitions should equal(Seq(
+    classDefinitions.map(_.replace("\n","").replace("\r","")) should equal(Seq(
       """
         |case class Person(
         |  NAME: String,
         |  AGE: Int
-        |)""".stripMargin,
+        |)""".stripMargin.replace("\n","").replace("\r",""),
       """
         |case class Book(
         |  TITLE: String,
         |  AUTHOR: String
-        |)""".stripMargin
+        |)""".stripMargin.replace("\n","").replace("\r","")
       )
     )
   }
@@ -94,21 +94,21 @@ class ClassGeneratorTest extends FunSuite with Matchers {
 
     deleteDirectory("target/com")
 
-    readFileContent("target/com/datawizards/model/Person.scala") should equal(
+    readFileContent("target/com/datawizards/model/Person.scala").replace("\n","").replace("\r","") should equal(
       """package com.datawizards.model
         |
         |case class Person(
         |  NAME: String,
         |  AGE: Int
-        |)""".stripMargin
+        |)""".stripMargin.replace("\n","").replace("\r","")
     )
-    readFileContent("target/com/datawizards/model/Book.scala") should equal(
+    readFileContent("target/com/datawizards/model/Book.scala").replace("\n","").replace("\r","") should equal(
       """package com.datawizards.model
         |
         |case class Book(
         |  TITLE: String,
         |  AUTHOR: String
-        |)""".stripMargin
+        |)""".stripMargin.replace("\n","").replace("\r","")
     )
   }
 
