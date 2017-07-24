@@ -14,9 +14,15 @@ class ClassGeneratorTest extends FunSuite with Matchers {
 
   test("generate people") {
     connection.createStatement().execute("create table PEOPLE(NAME VARCHAR, AGE INT)")
-    val classDefinition = ClassGenerator.generateClass("Person", url, null, "PUBLIC", "PEOPLE", H2Dialect)
+    val classDefinition = ClassGenerator.generateClass(url, null, H2Dialect, TableClassMapping("TEST", "PUBLIC", "PEOPLE", "com.peoplePackage", "Person"))
     classDefinition.replace("\n","").replace("\r","") should equal(
       """
+        |package com.peoplePackage
+        |
+        |/**
+        |  * Representation of table {@code TEST.PUBLIC.PEOPLE}.
+        |  * Generated automatically.
+        |  */
         |case class Person(
         |  NAME: String,
         |  AGE: Int
@@ -40,9 +46,15 @@ class ClassGeneratorTest extends FunSuite with Matchers {
         |)
       """.stripMargin
     connection.createStatement().execute(ddl)
-    val classDefinition = ClassGenerator.generateClass("AllTypes", url, null, "PUBLIC", "ALL_TYPES", H2Dialect)
+    val classDefinition = ClassGenerator.generateClass(dbUrl=url, connectionProperties = null, dialect = H2Dialect, mapping = TableClassMapping(database = "TEST", schema = "PUBLIC", table = "ALL_TYPES", packageName = "com.pack", className = "AllTypes"))
     classDefinition.replace("\n","").replace("\r","") should equal(
       """
+        |package com.pack
+        |
+        |/**
+        |  * Representation of table {@code TEST.PUBLIC.ALL_TYPES}.
+        |  * Generated automatically.
+        |  */
         |case class AllTypes(
         |  STRVAL: String,
         |  INTVAL: Int,
@@ -63,17 +75,29 @@ class ClassGeneratorTest extends FunSuite with Matchers {
     connection.createStatement().execute("create table T2(TITLE VARCHAR, AUTHOR VARCHAR)")
     val classDefinitions = ClassGenerator.generateClasses(
       url, null, H2Dialect, Seq(
-        TableClassMapping("PUBLIC", "T1", "", "Person"),
-        TableClassMapping("PUBLIC", "T2", "", "Book")
+        TableClassMapping(database = "TEST", schema = "PUBLIC", table = "T1", packageName = "pp", className = "Person"),
+        TableClassMapping(database = "TEST", schema = "PUBLIC", table = "T2", packageName = "pp", className = "Book")
       )
     )
     classDefinitions.map(_.replace("\n","").replace("\r","")) should equal(Seq(
       """
+        |package pp
+        |
+        |/**
+        |  * Representation of table {@code TEST.PUBLIC.T1}.
+        |  * Generated automatically.
+        |  */
         |case class Person(
         |  NAME: String,
         |  AGE: Int
         |)""".stripMargin.replace("\n","").replace("\r",""),
       """
+        |package pp
+        |
+        |/**
+        |  * Representation of table {@code TEST.PUBLIC.T2}.
+        |  * Generated automatically.
+        |  */
         |case class Book(
         |  TITLE: String,
         |  AUTHOR: String
@@ -87,8 +111,8 @@ class ClassGeneratorTest extends FunSuite with Matchers {
     connection.createStatement().execute("create table T22(TITLE VARCHAR, AUTHOR VARCHAR)")
     ClassGenerator.generateClassesToDirectory(
       "target", url, null, H2Dialect, Seq(
-        TableClassMapping("PUBLIC", "T11", "com.datawizards.model", "Person"),
-        TableClassMapping("PUBLIC", "T22", "com.datawizards.model", "Book")
+        TableClassMapping(database = "TEST", schema = "PUBLIC", table = "T11", packageName = "com.datawizards.model", className = "Person"),
+        TableClassMapping(database = "TEST", schema = "PUBLIC", table = "T22", packageName = "com.datawizards.model", className = "Book")
       )
     )
 
@@ -97,6 +121,10 @@ class ClassGeneratorTest extends FunSuite with Matchers {
     readFileContent("target/com/datawizards/model/Person.scala").replace("\n","").replace("\r","") should equal(
       """package com.datawizards.model
         |
+        |/**
+        |  * Representation of table {@code TEST.PUBLIC.T11}.
+        |  * Generated automatically.
+        |  */
         |case class Person(
         |  NAME: String,
         |  AGE: Int
@@ -105,6 +133,10 @@ class ClassGeneratorTest extends FunSuite with Matchers {
     readFileContent("target/com/datawizards/model/Book.scala").replace("\n","").replace("\r","") should equal(
       """package com.datawizards.model
         |
+        |/**
+        |  * Representation of table {@code TEST.PUBLIC.T22}.
+        |  * Generated automatically.
+        |  */
         |case class Book(
         |  TITLE: String,
         |  AUTHOR: String

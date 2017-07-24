@@ -16,12 +16,10 @@ object ClassGenerator {
                        mappings: Iterable[TableClassMapping]
                      ): Iterable[String] =
     mappings.map(m => generateClass(
-      m.className,
       dbUrl,
       connectionProperties,
-      m.schema,
-      m.table,
-      dialect
+      dialect,
+      m
     ))
 
   def generateClassesToDirectory(
@@ -39,23 +37,20 @@ object ClassGenerator {
         new File(directory).mkdirs()
         val file = directory + mapping.className + ".scala"
         val pw = new PrintWriter(file)
-        pw.write("package " + mapping.packageName + "\n")
         pw.write(definiton)
         pw.close()
     }
   }
 
   def generateClass(
-      className: String,
       dbUrl: String,
       connectionProperties: java.util.Properties,
-      schema: String,
-      table: String,
-      dialect: Dialect
+      dialect: Dialect,
+      mapping: TableClassMapping
     ): String = {
 
     def generateClassFields(): String = {
-      def tableColumns = dialect.extractTableColumns(dbUrl, connectionProperties, schema, table)
+      def tableColumns = dialect.extractTableColumns(dbUrl, connectionProperties, mapping.database, mapping.schema, mapping.table)
       val buffer = new ListBuffer[String]
       for(c <- tableColumns)
         buffer += generateClassField(c, dialect)
@@ -65,8 +60,16 @@ object ClassGenerator {
     def generateClassField(column: ColumnMetadata, dialect: Dialect): String =
       s"${column.columnName}: ${dialect.mapColumnTypeToScalaType(column)}"
 
+    val tableLocation = Seq(mapping.database, mapping.schema, mapping.table).filter(n => n != null && n != "").mkString(".")
+
     s"""
-      |case class $className(
+      |package ${mapping.packageName}
+      |
+      |/**
+      |  * Representation of table {@code ${tableLocation}}.
+      |  * Generated automatically.
+      |  */
+      |case class ${mapping.className}(
       |  ${generateClassFields()}
       |)""".stripMargin
   }
