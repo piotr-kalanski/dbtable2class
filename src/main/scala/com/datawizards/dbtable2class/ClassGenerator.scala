@@ -62,8 +62,7 @@ object ClassGenerator {
 
     val tableLocation = Seq(mapping.database, mapping.schema, mapping.table).filter(n => n != null && n != "").mkString(".")
 
-    s"""
-      |package ${mapping.packageName}
+    s"""package ${mapping.packageName}
       |
       |/**
       |  * Representation of table {@code ${tableLocation}}.
