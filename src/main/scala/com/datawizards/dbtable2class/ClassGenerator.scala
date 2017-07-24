@@ -57,8 +57,47 @@ object ClassGenerator {
       buffer.mkString(",\n  ")
     }
 
-    def generateClassField(column: ColumnMetadata, dialect: Dialect): String =
-      s"${column.columnName}: ${dialect.mapColumnTypeToScalaType(column)}"
+    def generateClassField(column: ColumnMetadata, dialect: Dialect): String = {
+      val caseClassField = columnNameToField(column.columnName)
+      s"${caseClassField}: ${dialect.mapColumnTypeToScalaType(column)}"
+    }
+
+    def reservedKeywords = Seq(
+      "case",
+      "catch",
+      "class",
+      "def",
+      "do",
+      "else",
+      "extends",
+      "false",
+      "final",
+      "for",
+      "if",
+      "match",
+      "new",
+      "null",
+      "print",
+      "printf",
+      "println",
+      "throw",
+      "to",
+      "trait",
+      "true",
+      "try",
+      "until",
+      "val",
+      "var",
+      "while",
+      "with"
+    )
+
+    def columnNameToField(columnName: String) :String ={
+      if(reservedKeywords.contains(columnName))
+        s"""`${columnName}`"""
+      else
+        columnName
+    }
 
     val tableLocation = Seq(mapping.database, mapping.schema, mapping.table).filter(n => n != null && n != "").mkString(".")
 
