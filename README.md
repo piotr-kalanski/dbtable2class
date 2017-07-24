@@ -49,12 +49,14 @@ PEOPLE(
 
 ```scala
 val url = "jdbc:h2:mem:test"
-ClassGenerator.generateClass("Person", url, null, "PUBLIC", "PEOPLE", H2Dialect)
+ClassGenerator.generateClass(url, null, H2Dialect, TableClassMapping(database="TEST", schema="PUBLIC", table="PEOPLE", packageName="com.datawizards.model", className="Person"))
 ```
 
 Result:
 
 ```scala
+package com.datawizards.model
+
 case class Person(
   NAME: String,
   AGE: Int
@@ -66,8 +68,8 @@ case class Person(
 ```scala
 ClassGenerator.generateClassesToDirectory(
   "target", url, null, H2Dialect, Seq(
-    TableClassMapping("PUBLIC", "T11", "com.datawizards.model", "Person"),
-    TableClassMapping("PUBLIC", "T22", "com.datawizards.model", "Book")
+    TableClassMapping(database="TEST", schema="PUBLIC", table="T11", packageName="com.datawizards.model", className="Person"),
+    TableClassMapping(database="TEST", schema="PUBLIC", table="T22", packageName="com.datawizards.model", className="Book")
   )
 )
 ```
