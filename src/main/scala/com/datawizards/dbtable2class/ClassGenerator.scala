@@ -108,14 +108,20 @@ object ClassGenerator {
     val tableLocation = Seq(mapping.database, mapping.schema, mapping.table).filter(n => n != null && n != "").mkString(".")
 
     s"""package ${mapping.packageName}
-      |
+      |${generateImports(mapping)}
       |/**
       |  * Representation of table {@code $tableLocation}.
       |  * Generated automatically.
       |  */
-      |case class ${mapping.className}(
+      |${generateAnnotations(mapping)}case class ${mapping.className}(
       |  ${generateClassFields()}
       |)""".stripMargin
   }
+
+  private def generateImports(mapping: TableClassMapping): String =
+    mapping.imports.map(imp => "import " + imp).mkString("\n")
+
+  private def generateAnnotations(mapping: TableClassMapping): String =
+    mapping.annotations.mkString("\n")
 
 }
