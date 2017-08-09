@@ -70,6 +70,82 @@ class ClassGeneratorTest extends FunSuite with Matchers {
     )
   }
 
+  test("generate reserved keywords") {
+    connection.createStatement().execute(
+      """create table TABLE_RESERVED_KEYWORDS(
+        |  "case" VARCHAR,
+        |  "catch" VARCHAR,
+        |  "class" VARCHAR,
+        |  "def" VARCHAR,
+        |  "do" VARCHAR,
+        |  "else" VARCHAR,
+        |  "extends" VARCHAR,
+        |  "false" VARCHAR,
+        |  "final" VARCHAR,
+        |  "for" VARCHAR,
+        |  "if" VARCHAR,
+        |  "match" VARCHAR,
+        |  "new" VARCHAR,
+        |  "null" VARCHAR,
+        |  "package" VARCHAR,
+        |  "print" VARCHAR,
+        |  "printf" VARCHAR,
+        |  "println" VARCHAR,
+        |  "throw" VARCHAR,
+        |  "to" VARCHAR,
+        |  "trait" VARCHAR,
+        |  "true" VARCHAR,
+        |  "try" VARCHAR,
+        |  "type" VARCHAR,
+        |  "until" VARCHAR,
+        |  "val" VARCHAR,
+        |  "var" VARCHAR,
+        |  "while" VARCHAR,
+        |  "with" VARCHAR
+        |)""".stripMargin)
+    val classDefinition = ClassGenerator.generateClass(url, null, H2Dialect, TableClassMapping("TEST", "PUBLIC", "TABLE_RESERVED_KEYWORDS", "com.peoplePackage", "Person"))
+    classDefinition.replace("\n","").replace("\r","") should equal(
+      """
+        |package com.peoplePackage
+        |
+        |/**
+        |  * Representation of table {@code TEST.PUBLIC.TABLE_RESERVED_KEYWORDS}.
+        |  * Generated automatically.
+        |  */
+        |case class Person(
+        |  `case`: String,
+        |  `catch`: String,
+        |  `class`: String,
+        |  `def`: String,
+        |  `do`: String,
+        |  `else`: String,
+        |  `extends`: String,
+        |  `false`: String,
+        |  `final`: String,
+        |  `for`: String,
+        |  `if`: String,
+        |  `match`: String,
+        |  `new`: String,
+        |  `null`: String,
+        |  `package`: String,
+        |  `print`: String,
+        |  `printf`: String,
+        |  `println`: String,
+        |  `throw`: String,
+        |  `to`: String,
+        |  `trait`: String,
+        |  `true`: String,
+        |  `try`: String,
+        |  `type`: String,
+        |  `until`: String,
+        |  `val`: String,
+        |  `var`: String,
+        |  `while`: String,
+        |  `with`: String
+        |)""".stripMargin.replace("\n","").replace("\r","")
+    )
+  }
+
   test("Generate multiple classes") {
     connection.createStatement().execute("create table T1(NAME VARCHAR, AGE INT)")
     connection.createStatement().execute("create table T2(TITLE VARCHAR, AUTHOR VARCHAR)")
