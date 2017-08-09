@@ -21,7 +21,11 @@ object MSSQLDialect extends Dialect {
     "tinyint" -> "Byte",
     "bit" -> "Boolean",
     "datetime" -> "java.sql.Timestamp",
-    "datetime2" -> "java.sql.Timestamp"
+    "datetime2" -> "java.sql.Timestamp",
+    "float" -> "Float",
+    "real" -> "Double",
+    "smalldatetime" -> "String",
+    "varbinary" -> "Array[Byte]"
   )
 
   override protected def driverClassName: String =
@@ -31,7 +35,7 @@ object MSSQLDialect extends Dialect {
     s"""
        |SELECT COLUMN_NAME, DATA_TYPE
        |FROM INFORMATION_SCHEMA.COLUMNS
-       |WHERE TABLE_CATALOG = '${database}' AND TABLE_SCHEMA = '${schema}' AND TABLE_NAME = '${table}'
+       |WHERE TABLE_CATALOG = '$database' AND TABLE_SCHEMA = '$schema' AND TABLE_NAME = '$table'
       """.stripMargin
 
   override protected def columnWithColumnName: String = "COLUMN_NAME"

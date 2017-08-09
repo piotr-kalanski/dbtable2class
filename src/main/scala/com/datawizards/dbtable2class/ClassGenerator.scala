@@ -59,7 +59,7 @@ object ClassGenerator {
 
     def generateClassField(column: ColumnMetadata, dialect: Dialect): String = {
       val caseClassField = columnNameToField(column.columnName)
-      s"${caseClassField}: ${dialect.mapColumnTypeToScalaType(column)}"
+      s"$caseClassField: ${dialect.mapColumnTypeToScalaType(column)}"
     }
 
     def reservedKeywords = Seq(
@@ -77,6 +77,7 @@ object ClassGenerator {
       "match",
       "new",
       "null",
+      "package",
       "print",
       "printf",
       "println",
@@ -85,6 +86,7 @@ object ClassGenerator {
       "trait",
       "true",
       "try",
+      "type",
       "until",
       "val",
       "var",
@@ -94,7 +96,11 @@ object ClassGenerator {
 
     def columnNameToField(columnName: String) :String ={
       if(reservedKeywords.contains(columnName))
-        s"""`${columnName}`"""
+        s"""`$columnName`"""
+      else if(columnName.contains("-"))
+        s"""`$columnName`"""
+      else if(columnName.endsWith("_"))
+        s"""`$columnName`"""
       else
         columnName
     }
@@ -104,7 +110,7 @@ object ClassGenerator {
     s"""package ${mapping.packageName}
       |
       |/**
-      |  * Representation of table {@code ${tableLocation}}.
+      |  * Representation of table {@code $tableLocation}.
       |  * Generated automatically.
       |  */
       |case class ${mapping.className}(
