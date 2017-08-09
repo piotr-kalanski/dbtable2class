@@ -166,6 +166,26 @@ class ClassGeneratorTest extends FunSuite with Matchers {
     )
   }
 
+  test("ends with _") {
+    connection.createStatement().execute(
+      """create table TABLE_ENDING_WITH_(
+        |  "column_" VARCHAR
+        |)""".stripMargin)
+    val classDefinition = ClassGenerator.generateClass(url, null, H2Dialect, TableClassMapping("TEST", "PUBLIC", "TABLE_ENDING_WITH_", "com.peoplePackage", "Person"))
+    classDefinition.replace("\n","").replace("\r","") should equal(
+      """
+        |package com.peoplePackage
+        |
+        |/**
+        |  * Representation of table {@code TEST.PUBLIC.TABLE_ENDING_WITH_}.
+        |  * Generated automatically.
+        |  */
+        |case class Person(
+        |  `column_`: String
+        |)""".stripMargin.replace("\n","").replace("\r","")
+    )
+  }
+
   test("Generate multiple classes") {
     connection.createStatement().execute("create table T1(NAME VARCHAR, AGE INT)")
     connection.createStatement().execute("create table T2(TITLE VARCHAR, AUTHOR VARCHAR)")

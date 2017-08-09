@@ -99,6 +99,8 @@ object ClassGenerator {
         s"""`$columnName`"""
       else if(columnName.contains("-"))
         s"""`$columnName`"""
+      else if(columnName.endsWith("_"))
+        s"""`$columnName`"""
       else
         columnName
     }
