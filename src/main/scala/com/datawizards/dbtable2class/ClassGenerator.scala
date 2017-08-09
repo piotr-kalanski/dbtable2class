@@ -119,9 +119,9 @@ object ClassGenerator {
   }
 
   private def generateImports(mapping: TableClassMapping): String =
-    mapping.imports.map(imp => "import " + imp).mkString("\n")
+    "\n" + mapping.imports.map(imp => "import " + imp + "\n").mkString("")
 
   private def generateAnnotations(mapping: TableClassMapping): String =
-    mapping.annotations.mkString("\n")
+    mapping.annotations.map(a => a + "\n").mkString("")
 
 }
