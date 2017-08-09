@@ -97,6 +97,8 @@ object ClassGenerator {
     def columnNameToField(columnName: String) :String ={
       if(reservedKeywords.contains(columnName))
         s"""`$columnName`"""
+      else if(columnName.contains("-"))
+        s"""`$columnName`"""
       else
         columnName
     }

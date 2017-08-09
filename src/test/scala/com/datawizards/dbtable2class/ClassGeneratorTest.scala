@@ -146,6 +146,26 @@ class ClassGeneratorTest extends FunSuite with Matchers {
     )
   }
 
+  test("character -") {
+    connection.createStatement().execute(
+      """create table TABLE_WITH_DASH(
+        |  "two-words" VARCHAR
+        |)""".stripMargin)
+    val classDefinition = ClassGenerator.generateClass(url, null, H2Dialect, TableClassMapping("TEST", "PUBLIC", "TABLE_WITH_DASH", "com.peoplePackage", "Person"))
+    classDefinition.replace("\n","").replace("\r","") should equal(
+      """
+        |package com.peoplePackage
+        |
+        |/**
+        |  * Representation of table {@code TEST.PUBLIC.TABLE_WITH_DASH}.
+        |  * Generated automatically.
+        |  */
+        |case class Person(
+        |  `two-words`: String
+        |)""".stripMargin.replace("\n","").replace("\r","")
+    )
+  }
+
   test("Generate multiple classes") {
     connection.createStatement().execute("create table T1(NAME VARCHAR, AGE INT)")
     connection.createStatement().execute("create table T2(TITLE VARCHAR, AUTHOR VARCHAR)")
