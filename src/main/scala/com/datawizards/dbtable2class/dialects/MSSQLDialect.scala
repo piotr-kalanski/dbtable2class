@@ -7,7 +7,7 @@ object MSSQLDialect extends Dialect {
   override def mapColumnTypeToScalaType(column: ColumnMetadata): String = {
     if(!typesMapping.contains(column.typeName))
       log.warn("Type not found: " + column.typeName)
-    typesMapping.getOrElse(column.typeName, "NOT FOUND")
+    typesMapping.getOrElse(column.typeName, "NOT FOUND " + column.typeName)
   }
 
   private val typesMapping = Map(

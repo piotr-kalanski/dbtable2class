@@ -260,6 +260,58 @@ class ClassGeneratorTest extends FunSuite with Matchers {
     )
   }
 
+  test("Generate imports") {
+    connection.createStatement().execute("create table PEOPLE_WITH_IMPORTS(NAME VARCHAR, AGE INT)")
+    val classDefinition = ClassGenerator.generateClass(url, null, H2Dialect, TableClassMapping("TEST", "PUBLIC", "PEOPLE_WITH_IMPORTS", "com.peoplePackage", "Person", Seq("com.datawizards.p1", "com.datawizards.p2")))
+    classDefinition.replace("\n","").replace("\r","") should equal(
+      """
+        |package com.peoplePackage
+        |
+        |import com.datawizards.p1
+        |import com.datawizards.p2
+        |
+        |/**
+        |  * Representation of table {@code TEST.PUBLIC.PEOPLE_WITH_IMPORTS}.
+        |  * Generated automatically.
+        |  */
+        |case class Person(
+        |  NAME: String,
+        |  AGE: Int
+        |)""".stripMargin.replace("\n","").replace("\r","")
+    )
+  }
+
+  test("Generate annotations") {
+    connection.createStatement().execute("create table PEOPLE_WITH_ANNOTATIONS(NAME VARCHAR, AGE INT)")
+    val classDefinition = ClassGenerator.generateClass(url, null, H2Dialect, TableClassMapping(
+      "TEST",
+      "PUBLIC",
+      "PEOPLE_WITH_ANNOTATIONS",
+      "com.peoplePackage",
+      "Person",
+      Seq("com.datawizards.p1", "com.datawizards.p2"),
+      Seq("""@a1(key="v1")""", """@a2(key="v2")""")
+    ))
+    classDefinition.replace("\n","").replace("\r","") should equal(
+      """
+        |package com.peoplePackage
+        |
+        |import com.datawizards.p1
+        |import com.datawizards.p2
+        |
+        |/**
+        |  * Representation of table {@code TEST.PUBLIC.PEOPLE_WITH_ANNOTATIONS}.
+        |  * Generated automatically.
+        |  */
+        |@a1(key="v1")
+        |@a2(key="v2")
+        |case class Person(
+        |  NAME: String,
+        |  AGE: Int
+        |)""".stripMargin.replace("\n","").replace("\r","")
+    )
+  }
+
   private def readFileContent(file: String): String =
     scala.io.Source.fromFile(file).getLines().mkString("\n")
 
