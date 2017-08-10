@@ -25,7 +25,10 @@ object MSSQLDialect extends Dialect {
     "float" -> "Float",
     "real" -> "Double",
     "smalldatetime" -> "String",
-    "varbinary" -> "Array[Byte]"
+    "varbinary" -> "Array[Byte]",
+    "uniqueidentifier" -> "String",
+    "date" -> "java.sql.Date",
+    "bigint" -> "BigInt"
   )
 
   override protected def driverClassName: String =
