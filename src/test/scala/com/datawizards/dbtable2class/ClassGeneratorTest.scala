@@ -313,8 +313,8 @@ class ClassGeneratorTest extends FunSuite with Matchers {
   }
 
   test("generate people with custom fields") {
-    connection.createStatement().execute("create table PEOPLE(NAME VARCHAR, AGE INT)")
-    val classDefinition = ClassGenerator.generateClass(url, null, H2Dialect, TableClassMapping("TEST", "PUBLIC", "PEOPLE", "com.peoplePackage", "Person",
+    connection.createStatement().execute("create table PEOPLE_CUSTOM(NAME VARCHAR, AGE INT)")
+    val classDefinition = ClassGenerator.generateClass(url, null, H2Dialect, TableClassMapping("TEST", "PUBLIC", "PEOPLE_CUSTOM", "com.peoplePackage", "Person",
       customScalaFields = Seq(
         CustomScalaField(fieldName = "BIRTH_DATE", fieldType = "java.sql.Date"),
         CustomScalaField(fieldName = "BIRTH_PLACE", fieldType = "String")
@@ -324,7 +324,7 @@ class ClassGeneratorTest extends FunSuite with Matchers {
         |package com.peoplePackage
         |
         |/**
-        |  * Representation of table {@code TEST.PUBLIC.PEOPLE}.
+        |  * Representation of table {@code TEST.PUBLIC.PEOPLE_CUSTOM}.
         |  * Generated automatically.
         |  */
         |case class Person(
