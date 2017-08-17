@@ -7,5 +7,6 @@ case class TableClassMapping(
                               packageName: String,
                               className: String,
                               imports: Seq[String] = Seq.empty,
-                              annotations: Seq[String] = Seq.empty
+                              annotations: Seq[String] = Seq.empty,
+                              customScalaFields: Seq[CustomScalaField] = Seq.empty
 )
