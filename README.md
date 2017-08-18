@@ -22,7 +22,7 @@ Generate Scala case class based on database table metadata
 ## Include dependencies
 
 ```scala
-"com.github.piotr-kalanski" % "dbtable2class_2.11" % "0.2.2"
+"com.github.piotr-kalanski" % "dbtable2class_2.11" % "0.3.0"
 ```
 
 or
@@ -31,7 +31,7 @@ or
 <dependency>
     <groupId>com.github.piotr-kalanski</groupId>
     <artifactId>dbtable2class_2.11</artifactId>
-    <version>0.2.2</version>
+    <version>0.3.0</version>
 </dependency>
 ```
 
