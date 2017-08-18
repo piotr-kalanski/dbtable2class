@@ -4,7 +4,7 @@ import java.io.File
 import java.sql.DriverManager
 
 import com.datawizards.dbtable2class.dialects.H2Dialect
-import com.datawizards.dbtable2class.model.TableClassMapping
+import com.datawizards.dbtable2class.model.{CustomScalaField, TableClassMapping}
 import org.scalatest._
 
 class ClassGeneratorTest extends FunSuite with Matchers {
@@ -308,6 +308,30 @@ class ClassGeneratorTest extends FunSuite with Matchers {
         |case class Person(
         |  NAME: String,
         |  AGE: Int
+        |)""".stripMargin.replace("\n","").replace("\r","")
+    )
+  }
+
+  test("generate people with custom fields") {
+    connection.createStatement().execute("create table PEOPLE_CUSTOM(NAME VARCHAR, AGE INT)")
+    val classDefinition = ClassGenerator.generateClass(url, null, H2Dialect, TableClassMapping("TEST", "PUBLIC", "PEOPLE_CUSTOM", "com.peoplePackage", "Person",
+      customScalaFields = Seq(
+        CustomScalaField(fieldName = "BIRTH_DATE", fieldType = "java.sql.Date"),
+        CustomScalaField(fieldName = "BIRTH_PLACE", fieldType = "String")
+      )))
+    classDefinition.replace("\n","").replace("\r","") should equal(
+      """
+        |package com.peoplePackage
+        |
+        |/**
+        |  * Representation of table {@code TEST.PUBLIC.PEOPLE_CUSTOM}.
+        |  * Generated automatically.
+        |  */
+        |case class Person(
+        |  NAME: String,
+        |  AGE: Int,
+        |  BIRTH_DATE : java.sql.Date,
+        |  BIRTH_PLACE : String
         |)""".stripMargin.replace("\n","").replace("\r","")
     )
   }
