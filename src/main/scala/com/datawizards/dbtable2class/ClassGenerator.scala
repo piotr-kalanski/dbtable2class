@@ -53,11 +53,12 @@ object ClassGenerator {
       def tableColumns = dialect.extractTableColumns(dbUrl, connectionProperties, mapping.database, mapping.schema, mapping.table)
       val buffer = new ListBuffer[String]
 
+      for(c <- tableColumns)
+        buffer += generateClassField(c, dialect)
+
       for (f <- mapping.customScalaFields)
         buffer += f.fieldToString()
 
-      for(c <- tableColumns)
-        buffer += generateClassField(c, dialect)
       buffer.mkString(",\n  ")
     }
 

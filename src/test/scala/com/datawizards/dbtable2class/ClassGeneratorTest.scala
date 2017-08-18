@@ -328,10 +328,10 @@ class ClassGeneratorTest extends FunSuite with Matchers {
         |  * Generated automatically.
         |  */
         |case class Person(
-        |  BIRTH_DATE : java.sql.Date,
-        |  BIRTH_PLACE : String,
         |  NAME: String,
-        |  AGE: Int
+        |  AGE: Int,
+        |  BIRTH_DATE : java.sql.Date,
+        |  BIRTH_PLACE : String
         |)""".stripMargin.replace("\n","").replace("\r","")
     )
   }
