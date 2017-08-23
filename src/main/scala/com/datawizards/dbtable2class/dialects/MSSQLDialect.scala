@@ -30,7 +30,9 @@ object MSSQLDialect extends Dialect {
     "date" -> "java.sql.Date",
     "bigint" -> "BigInt",
     "money" -> "BigDecimal",
-    "smallmoney" -> "BigDecimal"
+    "smallmoney" -> "BigDecimal",
+    "decimal" -> "BigDecimal",
+    "numeric" -> "BigDecimal"
   )
 
   override protected def driverClassName: String =
