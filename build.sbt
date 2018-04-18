@@ -30,7 +30,7 @@ libraryDependencies ++= Seq(
   "log4j" % "log4j" % "1.2.17",
   "org.scalatest" %% "scalatest" % "2.2.6" % "test",
   "junit" % "junit" % "4.10" % "test",
-  "com.h2database" % "h2" % "1.4.197" % "test"
+  "com.h2database" % "h2" % "1.4.195" % "test"
 )
 
 coverageExcludedPackages := "com.datawizards.dbtable2class.examples.*"
