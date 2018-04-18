@@ -3,6 +3,7 @@ package com.datawizards.dbtable2class
 import java.io.{File, PrintWriter}
 
 import com.datawizards.dbtable2class.dialects.Dialect
+import com.datawizards.dbtable2class.generator.FieldGenerator
 import com.datawizards.dbtable2class.model.{ColumnMetadata, TableClassMapping}
 
 import scala.collection.mutable.ListBuffer
@@ -49,65 +50,19 @@ object ClassGenerator {
       mapping: TableClassMapping
     ): String = {
 
+    val fieldGenerator = new FieldGenerator
+
     def generateClassFields(): String = {
       def tableColumns = dialect.extractTableColumns(dbUrl, connectionProperties, mapping.database, mapping.schema, mapping.table)
       val buffer = new ListBuffer[String]
 
       for(c <- tableColumns)
-        buffer += generateClassField(c, dialect)
+        buffer += fieldGenerator.generateClassField(c, dialect)
 
       for (f <- mapping.customScalaFields)
         buffer += f.fieldToString()
 
       buffer.mkString(",\n  ")
-    }
-
-    def generateClassField(column: ColumnMetadata, dialect: Dialect): String = {
-      val caseClassField = columnNameToField(column.columnName)
-      s"$caseClassField: ${dialect.mapColumnTypeToScalaType(column)}"
-    }
-
-    def reservedKeywords = Seq(
-      "case",
-      "catch",
-      "class",
-      "def",
-      "do",
-      "else",
-      "extends",
-      "false",
-      "final",
-      "for",
-      "if",
-      "match",
-      "new",
-      "null",
-      "package",
-      "print",
-      "printf",
-      "println",
-      "throw",
-      "to",
-      "trait",
-      "true",
-      "try",
-      "type",
-      "until",
-      "val",
-      "var",
-      "while",
-      "with"
-    )
-
-    def columnNameToField(columnName: String) :String ={
-      if(reservedKeywords.contains(columnName))
-        s"""`$columnName`"""
-      else if(columnName.contains("-"))
-        s"""`$columnName`"""
-      else if(columnName.endsWith("_"))
-        s"""`$columnName`"""
-      else
-        columnName
     }
 
     val tableLocation = Seq(mapping.database, mapping.schema, mapping.table).filter(n => n != null && n != "").mkString(".")
