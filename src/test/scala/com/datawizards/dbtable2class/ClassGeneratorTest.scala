@@ -318,7 +318,7 @@ class ClassGeneratorTest extends FunSuite with Matchers {
       customScalaFields = Seq(
         CustomScalaField(fieldName = "BIRTH_DATE", fieldType = "java.sql.Date"),
         CustomScalaField(fieldName = "BIRTH_PLACE", fieldType = "String"),
-        CustomScalaField(fieldName = "ANNOTATED_FIELD", fieldType = "String", fieldAnnotations = List("@someAnnotation", "@annotationB(\"sadf\")"))
+        CustomScalaField(fieldName = "ANNOTATED_FIELD", fieldType = "String", fieldAnnotations = Seq("@someAnnotation", "@annotationB(\"sadf\")"))
       )))
     classDefinition.replace("\n","").replace("\r","") should equal(
       """
