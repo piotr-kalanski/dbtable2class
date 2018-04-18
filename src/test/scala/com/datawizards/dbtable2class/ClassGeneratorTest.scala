@@ -317,7 +317,8 @@ class ClassGeneratorTest extends FunSuite with Matchers {
     val classDefinition = ClassGenerator.generateClass(url, null, H2Dialect, TableClassMapping("TEST", "PUBLIC", "PEOPLE_CUSTOM", "com.peoplePackage", "Person",
       customScalaFields = Seq(
         CustomScalaField(fieldName = "BIRTH_DATE", fieldType = "java.sql.Date"),
-        CustomScalaField(fieldName = "BIRTH_PLACE", fieldType = "String")
+        CustomScalaField(fieldName = "BIRTH_PLACE", fieldType = "String"),
+        CustomScalaField(fieldName = "ANNOTATED_FIELD", fieldType = "String", fieldAnnotations = List("@someAnnotation", "@annotationB(\"sadf\")"))
       )))
     classDefinition.replace("\n","").replace("\r","") should equal(
       """
@@ -331,7 +332,10 @@ class ClassGeneratorTest extends FunSuite with Matchers {
         |  NAME: String,
         |  AGE: Int,
         |  BIRTH_DATE : java.sql.Date,
-        |  BIRTH_PLACE : String
+        |  BIRTH_PLACE : String,
+        |  @someAnnotation
+        |  @annotationB("sadf")
+        |  ANNOTATED_FIELD : String
         |)""".stripMargin.replace("\n","").replace("\r","")
     )
   }

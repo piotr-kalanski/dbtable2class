@@ -31,7 +31,8 @@ object MSSQLDialect extends Dialect {
     "bigint" -> "BigInt",
     "money" -> "BigDecimal",
     "smallmoney" -> "BigDecimal",
-    "decimal" -> "BigDecimal"
+    "decimal" -> "BigDecimal",
+    "numeric" -> "BigDecimal"
   )
 
   override protected def driverClassName: String =
