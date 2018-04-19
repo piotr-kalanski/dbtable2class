@@ -149,7 +149,10 @@ class ClassGeneratorTest extends FunSuite with Matchers {
   test("character -") {
     connection.createStatement().execute(
       """create table TABLE_WITH_DASH(
-        |  "two-words" VARCHAR
+        |  "two-words" VARCHAR,
+        |  "asdf&qwer" VARCHAR,
+        |  "a b" VARCHAR,
+        |  "aaa<bbb>" VARCHAR
         |)""".stripMargin)
     val classDefinition = ClassGenerator.generateClass(url, null, H2Dialect, TableClassMapping("TEST", "PUBLIC", "TABLE_WITH_DASH", "com.peoplePackage", "Person"))
     classDefinition.replace("\n","").replace("\r","") should equal(
@@ -161,7 +164,10 @@ class ClassGeneratorTest extends FunSuite with Matchers {
         |  * Generated automatically.
         |  */
         |case class Person(
-        |  `two-words`: String
+        |  `two-words`: String,
+        |  `asdf&qwer`: String,
+        |  `a b`: String,
+        |  `aaa<bbb>`: String
         |)""".stripMargin.replace("\n","").replace("\r","")
     )
   }
