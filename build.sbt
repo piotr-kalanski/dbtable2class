@@ -2,7 +2,7 @@ name := "dbtable2class"
 
 organization := "com.github.piotr-kalanski"
 
-version := "0.3.1"
+version := "0.3.2"
 
 scalaVersion := "2.11.8"
 
