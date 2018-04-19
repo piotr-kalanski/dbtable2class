@@ -12,7 +12,7 @@ class FieldGenerator {
   private def columnNameToField(columnName: String) :String ={
     if(reservedKeywords.contains(columnName))
       s"""`$columnName`"""
-    else if(columnName.contains("-"))
+    else if(specialCharacters.exists(columnName.contains(_)))
       s"""`$columnName`"""
     else if(columnName.endsWith("_"))
       s"""`$columnName`"""
@@ -20,7 +20,11 @@ class FieldGenerator {
       columnName
   }
 
-  private def reservedKeywords = Seq(
+  private val specialCharacters = Seq(
+    " ", "\\", "!", "@", "#", "%", "^", "&", "*", "(", ")", "-", "+", "=", "[", "]", "{", "}", ";", ":", "'", "\"", ",", ".", "<", ">", "/", "?", "|", "~"
+  )
+
+  private val reservedKeywords = Seq(
     "case",
     "catch",
     "class",
